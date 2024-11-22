@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  cock1:
+    image: cockroachdb/cockroach:latest
+    container_name: cock1
+    hostname: cock1
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=cock1:26257
+      - --advertise-addr=cock1:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=cock1:26257,cock2:26257,cock3:26257
+      - --locality=region=tempe
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    volumes:
+      - cockroach-data-cock1:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+      - ./init.sql:/cockroach/init.sql # Added volume mapping for init.sql
+    networks:
+      - cock-net
+
+  cock2:
+    image: cockroachdb/cockroach:latest
+    container_name: cock2
+    hostname: cock2
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=cock2:26257
+      - --advertise-addr=cock2:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=cock1:26257,cock2:26257,cock3:26257
+      - --locality=region=poly
+    ports:
+      - "26258:26257"
+      - "8081:8080"
+    volumes:
+      - cockroach-data-cock2:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+    networks:
+      - cock-net
+
+  cock3:
+    image: cockroachdb/cockroach:latest
+    container_name: cock3
+    hostname: cock3
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=cock3:26257
+      - --advertise-addr=cock3:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=cock1:26257,cock2:26257,cock3:26257
+      - --locality=region=downtown
+    ports:
+      - "26259:26257"
+      - "8082:8080"
+    volumes:
+      - cockroach-data-cock3:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+    networks:
+      - cock-net
+
+volumes:
+  cockroach-data-cock1:
+  cockroach-data-cock2:
+  cockroach-data-cock3:
+
+networks:
+  cock-net:
