@@ -16,7 +16,8 @@ CREATE TABLE users (
 
 -- Create user and grant permissions
 CREATE USER charu WITH PASSWORD 'charu123';
-GRANT ALL ON DATABASE asudb TO charu;
+GRANT admin TO charu;
+-- GRANT ALL ON DATABASE asudb TO charu;
 
 -- Set zone config for partitons
 
