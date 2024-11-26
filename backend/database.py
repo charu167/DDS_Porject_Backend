@@ -1,3 +1,4 @@
+from decimal import Decimal
 import psycopg2
 from psycopg2 import sql
 
@@ -35,43 +36,90 @@ def get_transactions():
     conn.close()
     return transactions
 
-from decimal import Decimal
 
-
-
-def process_payment(sender_id, receiver_id, amount, region):
-    conn = connect_cockroachdb()
-    cursor = conn.cursor()
-
+def process_transaction(sender_id, sender_region, receiver_id, receiver_region, amount, description):
     try:
-        # Fetch sender's balance
-        cursor.execute("SELECT balance FROM accounts WHERE account_id = %s", (sender_id,))
-        sender_balance = cursor.fetchone()
+        # Establish database connection
+        conn = psycopg2.connect(
+            host="localhost",
+            port=26257,
+            database="asudb",
+            user="charu",
+            password="charu123"
+        )
+        conn.autocommit = False  # Enable transaction management
+        cursor = conn.cursor()
 
-        if not sender_balance:
-            return {"status": "error", "message": "Sender account does not exist."}
+        # Check if sender exists and has sufficient balance
+        cursor.execute(
+            """
+            SELECT balance FROM users 
+            WHERE id = %s AND region = %s;
+            """,
+            (sender_id, sender_region)
+        )
+        sender_data = cursor.fetchone()
+        if not sender_data:
+            raise ValueError("Sender does not exist.")
+        sender_balance = sender_data[0]
+        if sender_balance < amount:
+            raise ValueError("Insufficient balance for sender.")
 
-        from decimal import Decimal
-        amount = Decimal(amount)
+        # Check if receiver exists
+        cursor.execute(
+            """
+            SELECT id FROM users 
+            WHERE id = %s AND region = %s;
+            """,
+            (receiver_id, receiver_region)
+        )
+        if not cursor.fetchone():
+            raise ValueError("Receiver does not exist.")
 
-        if sender_balance[0] < amount:
-            return {"status": "error", "message": "Insufficient funds."}
+        # Update sender's balance
+        cursor.execute(
+            """
+            UPDATE users 
+            SET balance = balance - %s 
+            WHERE id = %s AND region = %s;
+            """,
+            (amount, sender_id, sender_region)
+        )
 
-        # Process payment
-        cursor.execute("UPDATE accounts SET balance = balance - %s WHERE account_id = %s", (amount, sender_id))
-        cursor.execute("UPDATE accounts SET balance = balance + %s WHERE account_id = %s", (amount, receiver_id))
-        cursor.execute("""
-        INSERT INTO payment_transactions (amount, sender_id, receiver_id, region)
-        VALUES (%s, %s, %s, %s)
-        """, (amount, sender_id, receiver_id, region))
+        # Update receiver's balance
+        cursor.execute(
+            """
+            UPDATE users 
+            SET balance = balance + %s 
+            WHERE id = %s AND region = %s;
+            """,
+            (amount, receiver_id, receiver_region)
+        )
 
+        # Insert transaction record
+        cursor.execute(
+            """
+            INSERT INTO transactions (
+                sender_id, sender_region, receiver_id, receiver_region, amount, description
+            ) VALUES (%s, %s, %s, %s, %s, %s);
+            """,
+            (sender_id, sender_region, receiver_id, receiver_region, amount, description)
+        )
+
+        # Commit the transaction
         conn.commit()
-        return {"status": "success", "message": "Payment processed successfully."}
+        print("Transaction processed successfully.")
+
+    except ValueError as ve:
+        conn.rollback()  # Rollback transaction in case of validation error
+        print(f"Transaction failed: {ve}")
 
     except Exception as e:
-        conn.rollback()
-        return {"status": "error", "message": str(e)}
+        conn.rollback()  # Rollback transaction for any other errors
+        print(f"Error processing transaction: {e}")
 
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()

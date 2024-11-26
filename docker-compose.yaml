@@ -15,7 +15,7 @@ services:
       - --listen-addr=eu1:26257
       - --advertise-addr=eu1:26257
       - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
+      - --join=eu1:26257,eu2:26257,eu3:26257,us1:26257,us2:26257,us3:26257,asia1:26257,asia2:26257,asia3:26257
       - --locality=region=eu
     ports:
       - "26257:26257"
@@ -37,7 +37,7 @@ services:
       - --listen-addr=eu2:26257
       - --advertise-addr=eu2:26257
       - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
+      - --join=eu1:26257,eu2:26257,eu3:26257,us1:26257,us2:26257,us3:26257,asia1:26257,asia2:26257,asia3:26257
       - --locality=region=eu
     volumes:
       - cockroach-data-eu2:/cockroach/cockroach-data
@@ -45,77 +45,23 @@ services:
     networks:
       - roach-net
 
-  # eu3:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: eu3
-  #   hostname: eu3
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=eu3:26257
-  #     - --advertise-addr=eu3:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=eu
-  #   volumes:
-  #     - cockroach-data-eu3:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # eu4:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: eu4
-  #   hostname: eu4
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=eu4:26257
-  #     - --advertise-addr=eu4:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=eu
-  #   volumes:
-  #     - cockroach-data-eu4:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # eu5:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: eu5
-  #   hostname: eu5
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=eu5:26257
-  #     - --advertise-addr=eu5:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=eu
-  #   volumes:
-  #     - cockroach-data-eu5:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # eu6:
-    # image: cockroachdb/cockroach:latest
-    # container_name: eu6
-    # hostname: eu6
-    # command:
-    #   - start
-    #   - --certs-dir=/cockroach/certs
-    #   - --listen-addr=eu6:26257
-    #   - --advertise-addr=eu6:26257
-    #   - --http-addr=0.0.0.0:8080
-    #   - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-    #   - --locality=region=eu
-    # volumes:
-    #   - cockroach-data-eu6:/cockroach/cockroach-data
-    #   - ./certificates/certs:/cockroach/certs
-    # networks:
-    #   - roach-net
+  eu3:
+    image: cockroachdb/cockroach:latest
+    container_name: eu3
+    hostname: eu3
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=eu3:26257
+      - --advertise-addr=eu3:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=eu1:26257,eu3:26257,us1:26257,us2:26257,asia1:26257,asia2:26257
+      - --locality=region=eu
+    volumes:
+      - cockroach-data-eu3:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+    networks:
+      - roach-net
 # EU nodes end
 
 
@@ -130,7 +76,7 @@ services:
       - --listen-addr=us1:26257
       - --advertise-addr=us1:26257
       - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
+      - --join=eu1:26257,eu2:26257,eu3:26257,us1:26257,us2:26257,us3:26257,asia1:26257,asia2:26257,asia3:26257
       - --locality=region=us
     volumes:
       - cockroach-data-us1:/cockroach/cockroach-data
@@ -148,7 +94,7 @@ services:
       - --listen-addr=us2:26257
       - --advertise-addr=us2:26257
       - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
+      - --join=eu1:26257,eu2:26257,eu3:26257,us1:26257,us2:26257,us3:26257,asia1:26257,asia2:26257,asia3:26257
       - --locality=region=us
     volumes:
       - cockroach-data-us2:/cockroach/cockroach-data
@@ -156,59 +102,24 @@ services:
     networks:
       - roach-net
 
-  # us3:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: us3
-  #   hostname: us3
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=us3:26257
-  #     - --advertise-addr=us3:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=us
-  #   volumes:
-  #     - cockroach-data-us3:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
 
-  # us4:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: us4
-  #   hostname: us4
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=us4:26257
-  #     - --advertise-addr=us4:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=us
-  #   volumes:
-  #     - cockroach-data-us4:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # us5:
-    # image: cockroachdb/cockroach:latest
-    # container_name: us5
-    # hostname: us5
-    # command:
-    #   - start
-    #   - --certs-dir=/cockroach/certs
-    #   - --listen-addr=us5:26257
-    #   - --advertise-addr=us5:26257
-    #   - --http-addr=0.0.0.0:8080
-    #   - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-    #   - --locality=region=us
-    # volumes:
-    #   - cockroach-data-us5:/cockroach/cockroach-data
-    #   - ./certificates/certs:/cockroach/certs
-    # networks:
-    #   - roach-net
+  us3:
+    image: cockroachdb/cockroach:latest
+    container_name: us3
+    hostname: us3
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=us3:26257
+      - --advertise-addr=us3:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=eu1:26257,eu2:26257,us1:26257,us3:26257,asia1:26257,asia2:26257
+      - --locality=region=us
+    volumes:
+      - cockroach-data-us3:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+    networks:
+      - roach-net
 # US nodes end
 
 
@@ -223,7 +134,7 @@ services:
       - --listen-addr=asia1:26257
       - --advertise-addr=asia1:26257
       - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
+      - --join=eu1:26257,eu2:26257,eu3:26257,us1:26257,us2:26257,us3:26257,asia1:26257,asia2:26257,asia3:26257
       - --locality=region=asia
     volumes:
       - cockroach-data-asia1:/cockroach/cockroach-data
@@ -241,7 +152,7 @@ services:
       - --listen-addr=asia2:26257
       - --advertise-addr=asia2:26257
       - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
+      - --join=eu1:26257,eu2:26257,eu3:26257,us1:26257,us2:26257,us3:26257,asia1:26257,asia2:26257,asia3:26257
       - --locality=region=asia
     volumes:
       - cockroach-data-asia2:/cockroach/cockroach-data
@@ -249,215 +160,40 @@ services:
     networks:
       - roach-net
 
-  # asia3:
-    # image: cockroachdb/cockroach:latest
-    # container_name: asia3
-    # hostname: asia3
-    # command:
-    #   - start
-    #   - --certs-dir=/cockroach/certs
-    #   - --listen-addr=asia3:26257
-    #   - --advertise-addr=asia3:26257
-    #   - --http-addr=0.0.0.0:8080
-    #   - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-    #   - --locality=region=asia
-    # volumes:
-    #   - cockroach-data-asia3:/cockroach/cockroach-data
-    #   - ./certificates/certs:/cockroach/certs
-    # networks:
-    #   - roach-net
-
-  # asia4:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: asia4
-  #   hostname: asia4
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=asia4:26257
-  #     - --advertise-addr=asia4:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=asia
-  #   volumes:
-  #     - cockroach-data-asia4:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # asia5:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: asia5
-  #   hostname: asia5
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=asia5:26257
-  #     - --advertise-addr=asia5:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=asia
-  #   volumes:
-  #     - cockroach-data-asia5:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # asia6:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: asia6
-  #   hostname: asia6
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=asia6:26257
-  #     - --advertise-addr=asia6:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=asia
-  #   volumes:
-  #     - cockroach-data-asia6:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # asia7:
-    # image: cockroachdb/cockroach:latest
-    # container_name: asia7
-    # hostname: asia7
-    # command:
-    #   - start
-    #   - --certs-dir=/cockroach/certs
-    #   - --listen-addr=asia7:26257
-    #   - --advertise-addr=asia7:26257
-    #   - --http-addr=0.0.0.0:8080
-    #   - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-    #   - --locality=region=asia
-    # volumes:
-    #   - cockroach-data-asia7:/cockroach/cockroach-data
-    #   - ./certificates/certs:/cockroach/certs
-    # networks:
-    #   - roach-net
+  asia3:
+    image: cockroachdb/cockroach:latest
+    container_name: asia3
+    hostname: asia3
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=asia3:26257
+      - --advertise-addr=asia3:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia3:26257
+      - --locality=region=asia
+    volumes:
+      - cockroach-data-asia3:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+    networks:
+      - roach-net
 # Asia nodes end
 
-  
-# Africa nodes start
-  afr1:
-    image: cockroachdb/cockroach:latest
-    container_name: afr1
-    hostname: afr1
-    command:
-      - start
-      - --certs-dir=/cockroach/certs
-      - --listen-addr=afr1:26257
-      - --advertise-addr=afr1:26257
-      - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
-      - --locality=region=africa
-    volumes:
-      - cockroach-data-afr1:/cockroach/cockroach-data
-      - ./certificates/certs:/cockroach/certs
-    networks:
-      - roach-net
-
-  afr2:
-    image: cockroachdb/cockroach:latest
-    container_name: afr2
-    hostname: afr2
-    command:
-      - start
-      - --certs-dir=/cockroach/certs
-      - --listen-addr=afr2:26257
-      - --advertise-addr=afr2:26257
-      - --http-addr=0.0.0.0:8080
-      - --join=eu1:26257,eu2:26257,us1:26257,us2:26257,asia1:26257,asia2:26257,afr1:26257,afr2:26257
-      - --locality=region=africa
-    volumes:
-      - cockroach-data-afr2:/cockroach/cockroach-data
-      - ./certificates/certs:/cockroach/certs
-    networks:
-      - roach-net
-
-  # afr3:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: afr3
-  #   hostname: afr3
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=afr3:26257
-  #     - --advertise-addr=afr3:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=africa
-  #   volumes:
-  #     - cockroach-data-afr3:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # afr4:
-  #   image: cockroachdb/cockroach:latest
-  #   container_name: afr4
-  #   hostname: afr4
-  #   command:
-  #     - start
-  #     - --certs-dir=/cockroach/certs
-  #     - --listen-addr=afr4:26257
-  #     - --advertise-addr=afr4:26257
-  #     - --http-addr=0.0.0.0:8080
-  #     - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-  #     - --locality=region=africa
-  #   volumes:
-  #     - cockroach-data-afr4:/cockroach/cockroach-data
-  #     - ./certificates/certs:/cockroach/certs
-  #   networks:
-  #     - roach-net
-
-  # afr5:
-    # image: cockroachdb/cockroach:latest
-    # container_name: afr5
-    # hostname: afr5
-    # command:
-    #   - start
-    #   - --certs-dir=/cockroach/certs
-    #   - --listen-addr=afr5:26257
-    #   - --advertise-addr=afr5:26257
-    #   - --http-addr=0.0.0.0:8080
-    #   - --join=eu1:26257,eu2:26257,eu3:26257,eu4:26257,eu5:26257,eu6:26257,us1:26257,us2:26257,us3:26257,us4:26257,us5:26257,asia1:26257,asia2:26257,asia3:26257,asia4:26257,asia5:26257,asia6:26257,asia7:26257,afr1:26257,afr2:26257,afr3:26257,afr4:26257,afr5:26257
-    #   - --locality=region=africa
-    # volumes:
-    #   - cockroach-data-afr5:/cockroach/cockroach-data
-    #   - ./certificates/certs:/cockroach/certs
-    # networks:
-    #   - roach-net
-# Africa nodes end
 
 
 volumes:
   cockroach-data-eu1:
   cockroach-data-eu2:
-  # cockroach-data-eu3:
-  # cockroach-data-eu4:
-  # cockroach-data-eu5:
-  # cockroach-data-eu6:
+  cockroach-data-eu3:
+
   cockroach-data-us1:
   cockroach-data-us2:
-  # cockroach-data-us3:
-  # cockroach-data-us4:
-  # cockroach-data-us5:
+  cockroach-data-us3:
+
   cockroach-data-asia1:
   cockroach-data-asia2:
-  # cockroach-data-asia3:
-  # cockroach-data-asia4:
-  # cockroach-data-asia5:
-  # cockroach-data-asia6:
-  # cockroach-data-asia7:
-  cockroach-data-afr1:
-  cockroach-data-afr2:
-  # cockroach-data-afr3:
-  # cockroach-data-afr4:
-  # cockroach-data-afr5:
+  cockroach-data-asia3:
+
 
 networks:
   roach-net:
