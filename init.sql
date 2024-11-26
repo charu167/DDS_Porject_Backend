@@ -8,9 +8,10 @@ CREATE TABLE users (
     name STRING NOT NULL,
     PRIMARY KEY (region, id)
 ) PARTITION BY LIST (region) (
-    PARTITION tempe VALUES IN ('tempe'),
-    PARTITION poly VALUES IN ('poly'),
-    PARTITION downtown VALUES IN ('downtown')
+    PARTITION US VALUES IN ('US'),
+    PARTITION EU VALUES IN ('EU'),
+    PARTITION China VALUES IN ('China'),
+    PARTITION India VALUES IN ('India')
 );
 
 
@@ -21,36 +22,46 @@ GRANT admin TO charu;
 
 -- Set zone config for partitons
 
-ALTER PARTITION tempe OF TABLE users
+ALTER PARTITION US OF TABLE users
 CONFIGURE ZONE USING
-    num_replicas = 1,
-    constraints = '{+region=tempe}',
-    lease_preferences = '[[+region=tempe]]';
+    num_replicas = 4;
+    -- constraints = '{+region=tempe}',
+    -- lease_preferences = '[[+region=US]]';
 
 SELECT pg_sleep(2);
-ALTER PARTITION poly OF TABLE users
+ALTER PARTITION EU OF TABLE users
 CONFIGURE ZONE USING
-    num_replicas = 1,
-    constraints = '{+region=poly}',
-    lease_preferences = '[[+region=poly]]';
+    num_replicas = 4;
+    -- constraints = '{+region=poly}',
+    -- lease_preferences = '[[+region=EU]]';
 
 SELECT pg_sleep(2);
-ALTER PARTITION downtown OF TABLE users
+ALTER PARTITION China OF TABLE users
 CONFIGURE ZONE USING
-    num_replicas = 1,
-    constraints = '{+region=downtown}',
-    lease_preferences = '[[+region=downtown]]';
+    num_replicas = 4;
+    -- constraints = '{+region=downtown}',
+    -- lease_preferences = '[[+region=China]]';
+
+SELECT pg_sleep(2);
+ALTER PARTITION India OF TABLE users
+CONFIGURE ZONE USING
+    num_replicas = 4;
+    -- constraints = '{+region=downtown}',
+    -- lease_preferences = '[[+region=India]]';
 
 
 SELECT pg_sleep(2);
 -- Insert sample data
 INSERT INTO users (region, name) VALUES
-    ('tempe', 'Alice'),
-    ('tempe', 'Bob'),
-    ('tempe', 'Charlie'),
-    ('poly', 'David'),
-    ('poly', 'Eve'),
-    ('poly', 'Frank'),
-    ('downtown', 'Grace'),
-    ('downtown', 'Heidi'),
-    ('downtown', 'Ivan');
+    ('US', 'Alice'),
+    ('US', 'Bob'),
+    ('US', 'Charlie'),
+    ('EU', 'David'),
+    ('EU', 'Eve'),
+    ('EU', 'Frank'),
+    ('China', 'Grace'),
+    ('China', 'Heidi'),
+    ('China', 'Ivan'),
+    ('India', 'Raman'),
+    ('India', 'Naresh'),
+    ('India', 'Kavita');

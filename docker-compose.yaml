@@ -12,7 +12,7 @@ services:
       - --advertise-addr=cock1:26257
       - --http-addr=0.0.0.0:8080
       - --join=cock1:26257,cock2:26257,cock3:26257
-      - --locality=region=tempe
+      - --locality=region=US
     ports:
       - "26257:26257"
       - "8080:8080"
@@ -34,7 +34,7 @@ services:
       - --advertise-addr=cock2:26257
       - --http-addr=0.0.0.0:8080
       - --join=cock1:26257,cock2:26257,cock3:26257
-      - --locality=region=poly
+      - --locality=region=EU
     ports:
       - "26258:26257"
       - "8081:8080"
@@ -55,7 +55,7 @@ services:
       - --advertise-addr=cock3:26257
       - --http-addr=0.0.0.0:8080
       - --join=cock1:26257,cock2:26257,cock3:26257
-      - --locality=region=downtown
+      - --locality=region=China
     ports:
       - "26259:26257"
       - "8082:8080"
@@ -65,10 +65,31 @@ services:
     networks:
       - cock-net
 
+  cock4:
+    image: cockroachdb/cockroach:latest
+    container_name: cock4
+    hostname: cock4
+    command:
+      - start
+      - --certs-dir=/cockroach/certs
+      - --listen-addr=cock4:26257
+      - --advertise-addr=cock4:26257
+      - --http-addr=0.0.0.0:8080
+      - --join=cock1:26257,cock2:26257,cock4:26257
+      - --locality=region=India
+    ports:
+      - "26260:26257"
+      - "8083:8080"
+    volumes:
+      - cockroach-data-cock4:/cockroach/cockroach-data
+      - ./certificates/certs:/cockroach/certs
+    networks:
+      - cock-net
 volumes:
   cockroach-data-cock1:
   cockroach-data-cock2:
   cockroach-data-cock3:
+  cockroach-data-cock4:
 
 networks:
   cock-net:
