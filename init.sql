@@ -8,10 +8,10 @@ CREATE TABLE users (
     name STRING NOT NULL,
     PRIMARY KEY (region, id)
 ) PARTITION BY LIST (region) (
-    PARTITION US VALUES IN ('US'),
-    PARTITION EU VALUES IN ('EU'),
-    PARTITION China VALUES IN ('China'),
-    PARTITION India VALUES IN ('India')
+    PARTITION eu VALUES IN ('eu'),
+    PARTITION us VALUES IN ('us'),
+    PARTITION asia VALUES IN ('asia'),
+    PARTITION africa VALUES IN ('africa')
 );
 
 
@@ -21,47 +21,87 @@ GRANT admin TO charu;
 -- GRANT ALL ON DATABASE asudb TO charu;
 
 -- Set zone config for partitons
-
-ALTER PARTITION US OF TABLE users
-CONFIGURE ZONE USING
-    num_replicas = 4;
-    -- constraints = '{+region=tempe}',
-    -- lease_preferences = '[[+region=US]]';
-
+-- eu data resides in eu, us, asia, africa
 SELECT pg_sleep(2);
-ALTER PARTITION EU OF TABLE users
+ALTER PARTITION eu OF TABLE users
 CONFIGURE ZONE USING
-    num_replicas = 4;
-    -- constraints = '{+region=poly}',
-    -- lease_preferences = '[[+region=EU]]';
+    -- num_replicas = 2,
+    constraints = '[+region=eu]',
+    lease_preferences = '[[+region=eu]]';
 
+-- us data resides in eu, us, asia, africa
 SELECT pg_sleep(2);
-ALTER PARTITION China OF TABLE users
+ALTER PARTITION us OF TABLE users
 CONFIGURE ZONE USING
-    num_replicas = 4;
-    -- constraints = '{+region=downtown}',
-    -- lease_preferences = '[[+region=China]]';
+    -- num_replicas = 2,
+    constraints = '[+region=us]',
+    lease_preferences = '[[+region=us]]';
 
+-- asia data resides in eu, us, asia, africa
 SELECT pg_sleep(2);
-ALTER PARTITION India OF TABLE users
+ALTER PARTITION asia OF TABLE users
 CONFIGURE ZONE USING
-    num_replicas = 4;
-    -- constraints = '{+region=downtown}',
-    -- lease_preferences = '[[+region=India]]';
+    -- num_replicas = 2,
+    constraints = '[+region=asia]',
+    lease_preferences = '[[+region=asia]]';
+
+-- africa data resides in eu, us, asia, africa
+SELECT pg_sleep(2);
+ALTER PARTITION africa OF TABLE users
+CONFIGURE ZONE USING
+    -- num_replicas = 2,
+    constraints = '[+region=africa]',
+    lease_preferences = '[[+region=africa]]';
 
 
 SELECT pg_sleep(2);
 -- Insert sample data
 INSERT INTO users (region, name) VALUES
-    ('US', 'Alice'),
-    ('US', 'Bob'),
-    ('US', 'Charlie'),
-    ('EU', 'David'),
-    ('EU', 'Eve'),
-    ('EU', 'Frank'),
-    ('China', 'Grace'),
-    ('China', 'Heidi'),
-    ('China', 'Ivan'),
-    ('India', 'Raman'),
-    ('India', 'Naresh'),
-    ('India', 'Kavita');
+    -- US Region
+    ('us', 'Alice'),
+    ('us', 'Bob'),
+    ('us', 'Charlie'),
+    ('us', 'Diana'),
+    ('us', 'Edward'),
+    ('us', 'Fiona'),
+    ('us', 'George'),
+    ('us', 'Hannah'),
+    ('us', 'Ian'),
+    ('us', 'Jane'),
+
+    -- EU Region
+    ('eu', 'David'),
+    ('eu', 'Eve'),
+    ('eu', 'Frank'),
+    ('eu', 'Laura'),
+    ('eu', 'Michael'),
+    ('eu', 'Nina'),
+    ('eu', 'Oliver'),
+    ('eu', 'Paul'),
+    ('eu', 'Quinn'),
+    ('eu', 'Rachel'),
+
+    -- Asia Region
+    ('asia', 'Grace'),
+    ('asia', 'Heidi'),
+    ('asia', 'Ivan'),
+    ('asia', 'Sunil'),
+    ('asia', 'Priya'),
+    ('asia', 'Ravi'),
+    ('asia', 'Sneha'),
+    ('asia', 'Tina'),
+    ('asia', 'Vikram'),
+    ('asia', 'Zara'),
+
+    -- Africa Region
+    ('africa', 'Raman'),
+    ('africa', 'Naresh'),
+    ('africa', 'Kavita'),
+    ('africa', 'Abdul'),
+    ('africa', 'Bola'),
+    ('africa', 'Chidi'),
+    ('africa', 'Dalia'),
+    ('africa', 'Ekon'),
+    ('africa', 'Fatima'),
+    ('africa', 'Gabriel');
+

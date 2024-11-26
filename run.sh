@@ -17,12 +17,12 @@ docker-compose up -d
 
 # Allow some time for services to initialize
 echo "Waiting for services to start..."
-sleep 5
+sleep 10
 echo "Services are now ready."
 
 # Initialize the CockroachDB cluster
 echo "Initializing CockroachDB cluster..."
-docker exec -it cock1 cockroach init --certs-dir=/cockroach/certs --host=cock1
+docker exec -it eu1 cockroach init --certs-dir=/cockroach/certs --host=eu1
 if [ $? -ne 0 ]; then
   echo "Cluster initialization failed. Exiting."
   exit 1
@@ -31,7 +31,7 @@ echo "Cluster initialization completed."
 
 # Apply CockroachDB enterprise license and organization settings
 echo "Applying CockroachDB license and organization settings..."
-docker exec -it cock1 cockroach sql --certs-dir=/cockroach/certs --host=cock1 -e "
+docker exec -it eu1 cockroach sql --certs-dir=/cockroach/certs --host=eu1 -e "
   SET CLUSTER SETTING enterprise.license = '$COCKROACH_LICENSE';
   SET CLUSTER SETTING cluster.organization = '';
 "
@@ -43,7 +43,7 @@ echo "CockroachDB settings applied successfully."
 
 # Execute the SQL initialization file
 echo "Executing SQL initialization script..."
-docker exec -i cock1 cockroach sql --certs-dir=/cockroach/certs --host=cock1 < ./init.sql
+docker exec -i eu1 cockroach sql --certs-dir=/cockroach/certs --host=eu1 < ./init.sql
 if [ $? -ne 0 ]; then
   echo "SQL initialization failed. Exiting."
   exit 1
