@@ -50,90 +50,76 @@ def get_all_users():
 @app.route('/process_payment', methods=['POST'])
 def process_payment():
     data = request.json
-    required_fields = ['sender_id', 'sender_region', 'receiver_id', 'receiver_region', 'amount', 'description']
-    if not all(field in data for field in required_fields):
-        return jsonify({"error": "Missing required fields"}), 400
-
     try:
-        conn = connect_cockroachdb()
-        conn.autocommit = False  # Enable transaction management
-        cursor = conn.cursor()
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                conn = connect_cockroachdb()
+                conn.autocommit = False  # Start a transaction
+                cursor = conn.cursor()
 
-        # Convert the input amount to Decimal
-        amount = Decimal(data['amount'])
+                # Check sender's balance
+                cursor.execute(
+                    "SELECT balance FROM users WHERE id = %s AND region = %s FOR UPDATE",
+                    (data["sender_id"], data["sender_region"]),
+                )
+                sender_balance = cursor.fetchone()
+                if not sender_balance:
+                    raise ValueError("Sender does not exist.")
 
-        # Check if sender exists and has sufficient balance
-        cursor.execute(
-            """
-            SELECT balance FROM users 
-            WHERE id = %s AND region = %s;
-            """,
-            (data['sender_id'], data['sender_region'])
-        )
-        sender_data = cursor.fetchone()
-        if not sender_data:
-            raise ValueError("Sender does not exist.")
-        sender_balance = sender_data[0]
-        if sender_balance < amount:
-            raise ValueError("Insufficient balance for sender.")
+                sender_balance = Decimal(sender_balance[0])  # Ensure this is a Decimal
+                amount = Decimal(data["amount"])  # Convert amount to Decimal
 
-        # Check if receiver exists
-        cursor.execute(
-            """
-            SELECT id FROM users 
-            WHERE id = %s AND region = %s;
-            """,
-            (data['receiver_id'], data['receiver_region'])
-        )
-        if not cursor.fetchone():
-            raise ValueError("Receiver does not exist.")
+                if sender_balance < amount:
+                    raise ValueError("Insufficient balance.")
 
-        # Perform transaction: Update balances and record transaction
-        cursor.execute(
-            """
-            UPDATE users 
-            SET balance = balance - %s 
-            WHERE id = %s AND region = %s;
-            """,
-            (amount, data['sender_id'], data['sender_region'])
-        )
-        cursor.execute(
-            """
-            UPDATE users 
-            SET balance = balance + %s 
-            WHERE id = %s AND region = %s;
-            """,
-            (amount, data['receiver_id'], data['receiver_region'])
-        )
-        cursor.execute(
-            """
-            INSERT INTO transactions (
-                sender_id, sender_region, receiver_id, receiver_region, amount, description
-            ) VALUES (%s, %s, %s, %s, %s, %s);
-            """,
-            (
-                data['sender_id'], data['sender_region'], 
-                data['receiver_id'], data['receiver_region'], 
-                amount, data['description']
-            )
-        )
+                # Update sender's balance
+                cursor.execute(
+                    "UPDATE users SET balance = balance - %s WHERE id = %s AND region = %s",
+                    (amount, data["sender_id"], data["sender_region"]),
+                )
 
-        conn.commit()
-        return jsonify({"message": "Transaction processed successfully."})
+                # Update receiver's balance
+                cursor.execute(
+                    "UPDATE users SET balance = balance + %s WHERE id = %s AND region = %s",
+                    (amount, data["receiver_id"], data["receiver_region"]),
+                )
 
-    except ValueError as ve:
-        if conn:
-            conn.rollback()
-        return jsonify({"error": str(ve)}), 400
+                # Log transaction
+                cursor.execute(
+                    """
+                    INSERT INTO transactions (
+                        sender_id, sender_region, receiver_id, receiver_region, amount, description
+                    ) VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (
+                        data["sender_id"],
+                        data["sender_region"],
+                        data["receiver_id"],
+                        data["receiver_region"],
+                        amount,  # Ensure this is Decimal
+                        data["description"],
+                    ),
+                )
 
+                conn.commit()
+                return jsonify({"message": "Transaction processed successfully."})
+
+            except Exception as e:
+                conn.rollback()  # Rollback the transaction on error
+                if "TransactionRetryWithProtoRefreshError" in str(e):
+                    if attempt < max_retries - 1:
+                        continue  # Retry the transaction
+                    else:
+                        raise ValueError("Transaction failed after multiple retries.")
+                else:
+                    raise e
     except Exception as e:
-        if conn:
-            conn.rollback()
-        return jsonify({"error": f"Error processing transaction: {e}"}), 500
-
+        return jsonify({"error": f"Error processing transaction: {e}"}), 400
     finally:
         if conn:
             conn.close()
+
 
 
 @app.route('/explain_users', methods=['GET'])
