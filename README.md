@@ -40,8 +40,8 @@ This project demonstrates a **Distributed Payment Processing System** that ensur
 
 1. **Clone the Repository**  
    ```bash
-   git clone <repository_url>
-   cd <repository_name>
+   git clone https://github.com/charu167/DDS_Porject_Backend
+   cd DDS_Porject_Backend
    ```
 
 2. **Install Required Tools**  
