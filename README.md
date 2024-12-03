@@ -70,7 +70,7 @@ This project demonstrates a **Distributed Payment Processing System** that ensur
      ```
    - Save your CockroachDB license key in an `.env` file in the root folder:
      ```
-     LICENSE_KEY=<your_cockroachdb_license_key>
+     LICENSE_KEY=<provided to you>
      ```
    - Provide execute permissions to the `run.sh` file:
      ```bash
