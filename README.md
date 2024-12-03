@@ -88,10 +88,10 @@ This project demonstrates a **Distributed Payment Processing System** that ensur
      ```
    - Ensure the following dependencies are installed in your Python environment:
      ```python
-     from decimal import Decimal  # Import Decimal for precise calculations
-     from flask import Flask, jsonify, request
-     import psycopg2
-     from flask_cors import CORS
+     decimal
+     flask
+     psycopg2
+     flask_cors
      ```
    - Start the server:
      ```bash
